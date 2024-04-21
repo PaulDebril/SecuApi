@@ -2,13 +2,13 @@ import { Exclude, Expose } from 'class-transformer';
 
 @Exclude()
 export class WorkerDTO {
-    @Expose({ groups: ['basic', 'identity',] })
+    @Expose({ groups: ['basic', 'identity','payroll'] })
     employee_id: string;
 
-    @Expose({ groups: ['basic', 'identity']})
+    @Expose({ groups: ['basic', 'identity','payroll']})
     first_name: string;
 
-    @Expose({ groups: ['basic', 'identity'] })
+    @Expose({ groups: ['basic', 'identity','payroll'] })
     last_name: string;
 
     @Expose({ groups: ['payroll'] })
