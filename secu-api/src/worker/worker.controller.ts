@@ -1,20 +1,22 @@
-import { Controller, Get, Post, Put, Delete, Param, Body, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Put, Delete, Param, Body, UseGuards, Req } from '@nestjs/common';
 import { WorkerService } from './worker.service';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+import { RolesGuard } from 'src/auth/RolesGuards';
 
 @UseGuards(JwtAuthGuard)
+@UseGuards(RolesGuard)
 @Controller('workers')
 export class WorkerController {
     constructor(private readonly workerService: WorkerService) {}
 
     @Get()
-    findAll() {
-        return this.workerService.findAll();
+    findAll(@Req() req: any) {
+        return this.workerService.findAll(req);
     }
 
     @Get(':employee_id')
-    getById(@Param('employee_id') employee_id: string) {
-        return this.workerService.getById(employee_id);
+    getById(@Param('employee_id') employee_id: string, @Req() req: any) {
+        return this.workerService.getById(employee_id, req);
     }
 
     @Post()
@@ -30,11 +32,5 @@ export class WorkerController {
     @Delete(':employee_id')
     delete(@Param('employee_id') employee_id: string) {
         return this.workerService.delete(employee_id);
-    }
-
-    @Get()
-    getWorker() {
-        const worker = { nom: 'John', prenom: 'Doe', salaire: 50000, request: { roles: ['basic'] } }; // Exemple d'objet worker
-        return this.workerService.getWorkerData(worker);
     }
 }
