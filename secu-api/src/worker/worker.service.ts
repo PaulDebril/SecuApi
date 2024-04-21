@@ -8,12 +8,13 @@ import { ClassTransformOptions, instanceToPlain } from 'class-transformer';
 export class WorkerService {
 
     getWorkerData(workerInstance: any, roles: string[]): WorkerDTO {
-        const options: ClassTransformOptions = { groups: roles };
-        const plainData = instanceToPlain(workerInstance, options);
-        console.log('Serialized Data:', plainData);
-        return plainData as WorkerDTO;
-    }
+        const workerDTO = new WorkerDTO();
+        Object.assign(workerDTO, workerInstance);
     
+        const options: ClassTransformOptions = { groups: roles };
+        console.log('Object to be serialized (DTO instance):', workerDTO);
+        return instanceToPlain(workerDTO, options) as WorkerDTO;
+    }
     
     
     private readonly workersPath = path.join(__dirname, '../../worker.json');
@@ -28,11 +29,12 @@ export class WorkerService {
     }
 
     
+
     findAll(req: any) {
-       //console.log('Rôles actuels:', req.userRoles); // Log des rôles pour le débogage
+        console.log('Roles actuels:', req.userRoles);
         const workers = this.readWorkersFile();
         const filteredWorkers = workers.map(worker => this.getWorkerData(worker, req.userRoles));
-        //console.log('Données filtrées:', filteredWorkers);
+        console.log('Données filtrées:', filteredWorkers);
         return filteredWorkers;
     }
     
@@ -74,4 +76,20 @@ export class WorkerService {
         this.writeWorkersFile(workers);
         return { deleted: true };
     }
+
+    testSerialization() {
+        const workerInstance = new WorkerDTO();
+        workerInstance.first_name = 'Test';
+        workerInstance.last_name = 'User';
+        workerInstance.employee_id = 'W12345';
+        workerInstance.bank_account_number = 'GB99TEST123456789';
+        workerInstance.monthly_salary = 5000;
+        workerInstance.national_id_number = '1234567890';
+    
+        const roles = ['payroll'];
+        const options: ClassTransformOptions = { groups: roles };
+        const result = instanceToPlain(workerInstance, options);
+        console.log('Test Serialized Data:', result);
+    }
+    
 }
